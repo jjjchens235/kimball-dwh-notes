@@ -2,10 +2,10 @@
 
 #### Different worlds of data capture and analysis
 1. Information is used for 2 purposes
-		1. operationally for record keeping
-			 1. Operations (OLTP) usually deals with 1 transaction at a time 
-		2. analytical decision making
-			 1.  Analytics (OLAP) deals generally with hundreds or thousands of transactions that need to be searched and compressed into an answer
+	1. operationally for record keeping
+		 1. Operations (OLTP) usually deals with 1 transaction at a time 
+	2. analytical decision making
+		 1.  Analytics (OLAP) deals generally with hundreds or thousands of transactions that need to be searched and compressed into an answer
 3.  Need to separate these two systems for performance and usability reasons
 
 #### Goals of DWH and BI (business intelligence)
