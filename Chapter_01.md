@@ -146,16 +146,47 @@ The ETL system resembles the kitchen because
 4. ETL systems, like the kitchen, are off limits to the restaurant patron/business user
 
 ##### Data presentation and BI in the front dining room
-- What are the key factors that a restaurant is rated on?
-	1. food
-	2. decor
-	3. service
-	4. cost
+What are the key factors that a restaurant is rated on?
+1. food
+2. decor
+3. service
+4. cost
 
 Similarly a DWH is rated on its data, is it consistent and high quality?
+
 The presentation area should be organized in a way that is appealing to the end user.
 
-#### Alternaties DW/BI architectures
+#### Alternatives DW/BI architectures
+Besides the Kimball architecture, there are two other great alternatives
+
+##### Independent Data Mart Architecture
+- Data is deployed on a departmental basis without cocern to sharing. 
+- This means that for shared metrics, each department develops its own data mart
+- This is a common approach because it's the path of least resistance, but it is strongly discouraged
+
+##### Hub and spoke coorporate information factory inmon architecture
+- Corporate Information Factory (CIF)
+![Architecture](images/Figure1.9-Bill_Inmon.png)
+
+#### Dimensional Modeling Myths
+##### Myth 1: Dim models are only for summary data
+False, you need to provide data at the most granular level because it is impossible to predict all the questions asked by business users.
+
+##### Myth 2: Dim models are departmental, not enterprise
+False, dim models should be based around business processes, NOT organizational departments
+
+
+##### Myth 3: Dim models are not scalable
+False, dim models are very scaleable.
+
+##### Myth 4: Dim models are only for predictable usage
+- Dimensional models should not be designed by focusing on predefined reports or analyses; the design should center on measurement processes.
+- Another myth is that dim models aren't responsive to changing business needs. Not true, they are extremely flexible, the secret to this is building fact tables at the most granular level- the correct starting point from your dim models is to express data at the lowest detail possible.
+
+
+
+
+
 
 
 
