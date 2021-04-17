@@ -114,3 +114,64 @@ A row in a `transaction fact table` corresponds to a measurement event at a poin
 
 ### Basic Dimension Table Techniques
 #### Dimension Table Structure
+
+- Every dimension table has a single PK column, these PK are embedded as FK in associated fact table
+
+#### Dimension Surrogate Keys
+- the dim table is designed to have 1 column serving as its primary key
+- The PK should not be the natural key (i.e SSN)
+- The PK should instead be surrogate keys (SERIAL type in Postgres)
+- The only exception to this rule are date dim tables, you can use the date itself
+
+
+#### Natural, Durable, and Supernatural keys
+- Natural keys are created by OLTP source systems and are subject ot business rules outside of the systme
+- Let's take the example of an emp quitting and then being re-hired, their emp ID may have changed so using natural key isn't a good idea
+- A `durable` key is one that is persistent and wouldn't change in this situation
+
+#### Drilling down
+- Drilling down means adding a row header to an existing query, i.e GROUP BY
+
+#### Degenerate Dimensions
+- Sometimes a dimension is defined that has no content except for its primary key. 
+
+#### Denormalized Flattened Dimensions
+- In general, dimensional designers must resist the normalization urges caused by years of operational database designs and instead denormalize the many-to-one fixed depth hierarchies into separate attributes on a flattened dimension row
+#### Multiple Hierarchies in Dimensions
+Many dimensions contain more than one natural hierarchy. For example, calendar date dimensions may have a day to week to fiscal period hierarchy, as well as a day to month to year hierarchy. Location intensive dimensions may have multiple geographic hierarchies. In all of these cases, the separate hierarchies can gracefully coexist in the same dimension table.
+
+#### Flags and Indicators as Textual Attributes
+Cryptic abbreviations, true/false flags, and operational indicators should be supplemented in dimension tables with full text words that have meaning when independently viewed
+
+
+#### Null attributes in dimensions
+- In dim tables null-value attributes should be replaced by a descriptive string such as 'Unknown'
+- This is because different DB's handle groupings and null constraints differently
+
+#### Calendar date time dimensions
+- Almost all fact tables will contain a FK to a date time dim table
+- You would never compute a date in a fact table, you would always join with a date dim table.
+- Surrogate key is not needed for date dim tables, can use natural key of YYYY-mm-dd
+
+#### Role-Playing Dimensions
+- A single physical dimension can be referenced multiple times in a fact table, with each reference linking to a logically distinct role for the dimension.
+- For instance, a fact table can have several dates, each of which is represented by a foreign key to the date dimension. 
+
+#### Junk Dimensions
+- Transactional business processes typically produce a number of miscellaneous, low-cardinality flags and indicators.
+- Rather than making separate dimensions for each flag and attribute, you can create a single junk dimension combining them together.
+- This dimension, frequently labeled as a transaction profile dimension in a schema, does not need to be the Cartesian product of all the attributes' possible values, but should only contain the combination of values that actually occur in the source data.
+
+#### Snowflaked Dimensions
+- [Snowflake_schema.jpg](https://www.softwaretestinghelp.com/wp-content/qa/uploads/2019/09/Snowflake-Schema.jpg)
+- When a hierarchical relationship in a dimension table is normalized, low-cardinality attributes appear as secondary tables connected to the base dimension table by an attribute key.  
+- Although the snowflake represents hierarchical data accurately, you should avoid snowflakes because it is difficult for business users to understand and navigate snowflakes.
+
+#### Outrigger Dims
+- A dimension can contain a reference to another dimension table.
+- For instance, a bank account dimension can reference a separate dimension representing the date the account was opened.
+- These secondary dimension references are called outrigger dimensions. Outrigger dimensions are permissible, but should be used sparingly. 
+
+### Integrated via Conformed Dimensions
+Conformed Dims are simple, but is a powerful method to integrate data from different processes.
+#### Conformed Dimensions
