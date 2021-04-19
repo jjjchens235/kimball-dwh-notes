@@ -1,6 +1,6 @@
-### Chapter 2 Kimball Dimensional Modeling Techniques Overview
+## Chapter 2 Kimball Dimensional Modeling Techniques Overview
 - This chapter is intended to be an official list of Kimball Dim techniques and will serve as a reference to each technique. 
-#### Fundamental Concepts
+### Fundamental Concepts
 1. Gather business requirements and data realities
 	- Chapter 1 DW/BI and Dimensional Modeling Primers
 	- Chapter 3 Retail Sales
@@ -9,13 +9,13 @@
 	- Chapter 18 Dimensional Modeling Process and Tasks
 	- Chapter 19 ETL Subsystems and Techniques
 
-#### Collaborative Dimensional Modeling Workshops
+### Collaborative Dimensional Modeling Workshops
 Dimension models should be designed with other business representatives such as subject matter experts
 - Chapter 3 Retail Sales
 - Chapter 4 Inventory
 - Chapter 18 Dimensional Modeling Process and Tasks”
 
-#### “Four-Step Dimensional Design Process
+### Four-Step Dimensional Design Process
 The four steps are
 1. Select business process
 2. declare the grain
@@ -32,12 +32,12 @@ Appears in:
 - Chapter 11 Telecommunications
 - Chapter 18 Dimensional Modeling Process and Tasks
 
-##### Business Process
+#### Business Process
 Business processes are the operational activities, such as processing an insurance claim.
 These business process events generate or capture performance metrics that translate into facts into a fact table.
 
 
-##### Grain
+#### Grain
 Declaring the grain establishes what a single fact table row represents. Every dimension or fact table henceforth must be consistent with this declared grain.
 `Atomic grain` refers to the lowest level in which data is captured by a given project. 
 It is strongly encouraged to start with atomic-grained data since you can always roll-up the data, but you can't roll down the data.
@@ -50,7 +50,7 @@ It is strongly encouraged to start with atomic-grained data since you can always
 - Chapter 12 Transportation
 - Chapter 18 Dimensional Modeling Process and Tasks
 
-##### Dimensions for Descriptive Context
+#### Dimensions for Descriptive Context
 Dimensions provide the “who, what, where, when, why, and how” context surrounding a business process event
 
 - Chapter 1 DW/BI and Dimensional Modeling Primer
@@ -59,7 +59,7 @@ Dimensions provide the “who, what, where, when, why, and how” context surrou
 - Chapter 18 Dimensional Modeling Process and Tasks
 - Chapter 19 ETL Subsystems and Techniques
 
-##### Facts for measurements
+#### Facts for measurements
 Facts are the measurements that result from a business process event and are almost always numeric.
 A single fact table row has a one to one relationship to measurements as described by the fact table's grain
 
@@ -68,10 +68,10 @@ A single fact table row has a one to one relationship to measurements as describ
 - Chapter 4 Inventory
 - Chapter 18 Dimensional Modeling Process and Tasks
 
-##### Star Schemas and OLAP Cubes
+#### Star Schemas and OLAP Cubes
 - skipped
 
-#### Basic Fact Table Techniques
+### Basic Fact Table Techniques
 ##### Fact Table Structure
 - Fact table contains numeric measures produced by operational measurable events
 - The fact table design should be based on physical events and not on the eventual reports that may be produced
@@ -175,3 +175,120 @@ Cryptic abbreviations, true/false flags, and operational indicators should be su
 ### Integrated via Conformed Dimensions
 Conformed Dims are simple, but is a powerful method to integrate data from different processes.
 #### Conformed Dimensions
+
+- Dim tables conform when attributes in seperate tabls have the same column names
+
+### Enterprise Data Warehouse Bus Arch
+- This architecture decomposes the DW/BI planning process into manageable pieces by focusing on business processes, while delivering integration via standardized conformed dimensions that are reused across processes.
+
+### Enterprise Data Warehouse Bus Matrix
+The enterprise data warehouse bus matrix is the essential tool for designing and communicating the enterprise data warehouse bus architecture. 
+
+### Dealing with slowly changing dim attributes
+There are different approaches with slowly changing dimensions (SCD)
+0. Type 0 Retain Original
+	- The dimension attribute value never changes, i.e any attribute labeled 'original' such as a customer's original credit card
+1. type 1: Overwrite
+	- The old attribute value in a dimension row is over-written with the new value
+	- type 1 assignments always reflects the most recent assignment
+2. Type 2: Add new row
+	- Type 2 changes add a new row in the dim with the updated attribute values
+	- This requires creating a primary key that goes beyond just a natural key since there can be multiple rows describing each member
+	- A minimum of 3 new rows needed to be added to the dim table for Type 2 changes
+		1. row effective date
+		2. row expiration date
+		3. current row indicator
+3. Type 3: Add New Attribute
+	- A new attribute/field is added rather than overwriting as in type 1
+	- This change is aptly referred to as `alternative reality`
+4. Type 4: Add mini dimension
+	- The type 4 technique is used when a group of attributes in a dimension rapidly changes and is split off to a mini-dimension
+5. Add Mini-Dimension and Type 1 Outrigger
+- The type 5 technique is used to accurately preserve historical attribute values, plus report historical facts according to current attribute values. Type 5 builds on the type 4 mini-dimension by also embedding a current type 1 reference to the mini-dimension in the base dimension
+6. Type 6: Add Type 1 Attributes to Type 2 Dimension
+Like type 5, type 6 also delivers both historical and current dimension attribute values.
+- Type 6 builds on the type 2 technique by also embedding current type 1 versions of the same attributes in the dimension row so that fact rows can be filtered or grouped by either the type 2 attribute value in effect when the measurement occurred or the attribute's current value
+7. Dual Type 1 and Type 2 Dimensions
+- Type 7 is the final hybrid technique used to support both as-was and as-is reporting.
+- A fact table can be accessed through a dimension modeled both as a type 1 dimension showing only the most current attribute values, or as a type 2 dimension showing correct contemporary historical profiles.
+- The same dimension table enables both perspectives. Both the durable key and primary surrogate key of the dimension are placed in the fact table.
+
+### Dealing with Dimension Hierarchies
+#### Fixed Depth Positional Hierarchies
+- A fixed depth hierarchy is a series of many-to-one relationships, such as product to brand to category to department. 
+
+####Slightly Ragged/Variable Depth Hierarchies
+- Slightly ragged hierarchies don't have a fixed number of levels, but the range in depth is small.
+- Geographic hierarchies often range in depth from perhaps three levels to six levels. 
+
+#### Ragged/Variable Depth Hierarchies with Hierarchy Bridge Tables
+- Ragged hierarchies of indeterminate depth are difficult to model and query in a relational database.
+- Solution is to use `bridge table`
+
+#### Ragged/Variable Depth Hierarchies with Pathstring Attributes
+- The use of a bridge table for ragged variable depth hierarchies can be avoided by implementing a pathstring attribute in the dimension.
+- For each row in the dimension, the pathstring attribute contains a specially encoded text string containing the complete path description from the supreme node of a hierarchy down to the node described by the particular dimension row.
+
+### Advanced Fact Table Techniques
+#### Fact Table Surrogate Keys
+- Surrogate keys are used to implement the primary keys of almost all dimension tables.
+- In addition, single column surrogate fact keys can be useful, albeit not required, for the following reasons:
+	1. Used a single column PK of fact table
+	2. serve as immediate identifier of fact table without navigating multiple dimensions
+	3. Allow for interrupted load process to back out / resume
+	4. allow fact table update operations to be decomposed into less risky inserts/deletes
+
+#### Centipede Fact Tables
+- Some designers create separate normalized dimensions for each level of a many-to-one hierarchy, such as a date dimension, month dimension, quarter dimension, and year dimension, and then include all these foreign keys in a fact table.
+- This results in a centipede fact table with dozens of hierarchically related dimensions.
+- `Centipede fact tables should be avoided.`
+
+#### Numeric Values as Attributes or Facts
+- Designers sometimes encounter numeric values that don't clearly fall into either the fact or dimension attribute categories.
+- A classic example is a product's standard list price.
+- If the numeric value is used primarily for calculation purposes, it likely belongs in the fact table.
+- If a stable numeric value is used predominantly for filtering and grouping, it should be treated as a dimension attribute
+
+#### Lag/Duration Facts
+TODO
+
+#### Header/Line Fact Tables
+#### Allocated Facts
+#### Profit and Loss Fact Tables Using Allocations
+#### Multiple Currency Facts
+#### Multiple Units of measure Facts
+#### Year-to-Date Facts
+#### Multipass SQL to Avoid Fact-to-Fact Table Joins
+#### Timespan Tracking in Fact Tables
+#### Late Arriving Facts
+
+
+### Advanced Dimension Techniques
+#### Dimension-to-Dimension Table Joins
+- Dimensions can contain references to other dimensions.
+- these relationships can be modeled with outrigger dimensions
+- in some cases, the existence of a foreign key to the outrigger dimension in the base dimension can result in explosive growth of the base dimension because type 2 changes in the outrigger force corresponding type 2 processing in the base dimension.
+
+#### Multivalued Dimensions and Bridge Tables
+- In a classic dimensional schema, each dimension attached to a fact table has a single value consistent with the fact table's grain.
+- But there are a number of situations in which a dimension is legitimately multivalued.
+- For example, a patient receiving a healthcare treatment may have multiple simultaneous diagnoses
+
+#### Time Varying Multivalued Bridge Tables
+#### Behavior Tag Time Series
+#### Behavior Study Groups
+#### Aggregated Facts as Dimension Attributes
+#### Dynamic Value Bands
+#### Text Comments Dimension
+#### Multiple Time Zones
+#### Measure Type Dimensions
+#### Step Dimensions
+#### Hot Swappable Dimensions
+#### Abstract Generic Dimensions
+#### Audit Dimensions
+#### Late Arriving Dimensions
+
+### Special Purpose Schemas
+#### Supertype and Subtype Schemas for Heterogeneous Products
+#### Real-Time Fact Tables
+#### Error Event Schemas
