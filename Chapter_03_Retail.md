@@ -104,7 +104,56 @@ The facts include:
 - sales dollar amounts
 ![Fact Table](images/Figure_3.3-fact_table_design.png)
 
-### Derived Facts
+#### Derived Facts
+- You can compute gross profit yourself, yet it generally advised to store these derived facts in the table as well, as it guarantees the calculation is calculated consistently
+- This more than makes up the cost of the extra storage cost
 
+#### Non-additive facts
+- Non-additive facts cannot be summarized along any dimension.
+- Unit price is a good example of this
 
+#### Transaction Fact Tables
+- transactional business processes are the most common
+These fact tables have the following characteristics:
+1. The grain of the transaction fact table is generally 1 row per transaction
+2. These fact tables are highly dimensional
 
+These tables are generally your largest table, when first designing it's important to estimate how many line items will be generated, looking at historical data is your best bet
+
+### Dimension Table Details
+#### Date Dimension
+- The date dimension is the one dimension nearly guaranteed to be in the dim model
+- Some may argue that a dim date table is not necessary since this logic can be derived using SQL date semantics
+	- The author's counter-argument is that an average business user is not well versed with these SQL date utilities
+	- Furthermore, there are some attributes such as holidays that SQL functions do not support
+
+#### Flag and Indicators as Textual Attributes
+- The author argues that for an example column called 'Holiday Indicator', rather than having values such as True/False or 1/0, it is better to have the value either be 'Holiday' or 'Non-Holiday', with one reason being if the user does a GROUP BY on the data, the grouped by row values will be much easier to interpret.
+
+#### Current and Relative Date Attributes
+- Most date attributes don't need to be updated, i.e Jun 13 will always roll up to Jun.
+- Some attributes, such as 'isCurrentDay' will change over time
+	- isCurrentDay will generally refer to yesterday's data, assuming the data is updated once a day
+
+#### Time of day, dim or fact ??
+- Time of day is usually separated from the date dim because while the date dimension includes ~7k rows for 20 years, if this grain was changed to 1 minute, 20 years worth of data would represent 10 million rows.
+- Time of day should be a dim table if you plan on filtering or rolling up time periods based on groupings such as 15 min intervals, hours, shifts, etc
+- If not rolling up by time of day groupings, then it should be a simple date/time fact in the fact table.
+
+#### Product Dimension
+The production dimension describes every SKU in the grocery store.
+
+##### Flatten Many-to-one Hierarchies
+The product dim represents the many descriptive attributes of each SKU.
+- The merchandise hierarchy: SKU -> brands -> categories -> depts. Each of these is a many -> one relationship
+![Product Dim Rows](images/Figure3.7-product_dimension.png)
+
+- There are 300k unique SKU's, yet only 50 distinct department attributes.
+	- That means that each distinct dept value will be repeated around 6000x (300k/50). This is completely acceptable
+
+- Here are the attributes of the product dimensions table:
+![Product dim table](images/Figure3.8-Product_dim.png)
+
+- Note that there are certain attributes such as 'package type' that don't belong in the merchandise hierarchy (not a brand, category, etc)
+
+##### Attributes with Embedded Meaning
