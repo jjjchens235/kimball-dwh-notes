@@ -157,3 +157,48 @@ The product dim represents the many descriptive attributes of each SKU.
 - Note that there are certain attributes such as 'package type' that don't belong in the merchandise hierarchy (not a brand, category, etc)
 
 ##### Attributes with Embedded Meaning
+- Product codes sometimes have embedded meaning with different parts of the code representing significant characteristics of the product
+- If this is the case, the dimension table should also include the broken down component parts as separate attributes
+
+
+##### Numeric values as attributes or facts
+- If the numeric value is used primarily for calculation purposes, it most likely belongs to the fact table
+- If the numeric value changes infrequently, say a standard list price for a product, it may belong in the dim table instead
+
+#### Drilling down on dimension attributes
+- A reasonable product dimension could have 50+ descriptive attributes
+- Drilling down in a dimensional model is nothing more than adding row header attributes from the dimension tables. Drilling up is removing row headers. You can drill down or up on attributes from more than one explicit hierarchy and with attributes that are part of no hierarchy.
+
+### Store Dimension
+- The store dimension describes every store in the grocery chain
+#### Multiple Hierarchies in Dimension table
+- You can roll up stores to any geographic attribute such as zip code, county, and state
+- Contrary to popular belief city and state do not form a hierarchy, since there are many cities with the same name, you should include a city-state attribute instead
+![Store Dimension](images/Figure3_10-Store_Dimensions.png)
+
+
+### Dates within Dimension Tables
+- Referring to the store dimension diagram above, the 'first open date' could be a date column, but it is better to make them join keys to copies of the date dim table 
+
+### Promotion Dimension
+- The promotion dimension describes the promotion conditions under which a product is sold
+- These include temporary price reductions, coupons, etc
+- Here the author explains different factors that would determine if a promotion is successful or not, such as cannibalization, baseline comparison, etc
+![Product Dimension](images/Figure3.11-promotion_dimension.png)
+- The author then explains the design considerations of separating the 4 promotions
+
+### Null FK, Attributes and Facts
+- There needs to be a way to identify a null promotion key in the fact table
+- Referential integrity is violated if you put a null in a fact table column. Therefore there needs to be a row in the dim table to identify that the dim is not applicable to the measurement
+- It is recommended that rather than using null when a row has not been fully populated, to rather use a descriptive string such as 'Not Applicable' as null values are special and require special syntax to identify them
+- Note that NULLS as metrics in the fact table is perfectly acceptable and should be used since they are properly handled in aggregate functions such as sum, and avg- substituting with zero would improperly skew the results
+
+### Other Retail Sales Dimensions
+- Any descriptive attribute that takes on a single value in the presence of a fact table measurement event is a good candidate to be added to an existing dim / it's own dim
+- An example of this would be a cashier dimension. Note that if this dim was created, the cashier dim should have a 'No Cashier' row, similar to in the promo dimension for transactions that are processed without a cashier
+- Payment method dim, trickier. This is what the author has to say: 
+	- In real life, payment methods often present a more complicated scenario. 
+	- If multiple payment methods are accepted on a single POS transaction, the payment method does not take on a single value at the declared grain.
+	- Rather than altering the declared grain to be something unnatural such as one row per payment method per product on a POS transaction, you would likely capture the payment method in a separate fact table with a granularity of either one row per transaction (then the various payment method options would appear as separate facts) or one row per payment method per transaction (which would require a separate payment method dimension to associate with each row).
+
+### Degenerate Dimensions for Transaction Numbers
