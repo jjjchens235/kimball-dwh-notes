@@ -202,3 +202,59 @@ The product dim represents the many descriptive attributes of each SKU.
 	- Rather than altering the declared grain to be something unnatural such as one row per payment method per product on a POS transaction, you would likely capture the payment method in a separate fact table with a granularity of either one row per transaction (then the various payment method options would appear as separate facts) or one row per payment method per transaction (which would require a separate payment method dimension to associate with each row).
 
 ### Degenerate Dimensions for Transaction Numbers
+- The retail sales fact table includes the POS transaction number on every line item row.
+- In the transactional system, this transaction number would be the key to the rest of the transaction data, but in the dim model, you have already extracted this data.
+- It is still important to keep this transaction number because 
+	- it serves as the grouping key for pulling together all the products in a transaction
+	- It allows you to link back to the operational system
+
+- The POS transaction number may look like a dimension key, but the descriptive items have been stripped off - it's an empty dimension- this is why this is referred to as `degenerate dimension` (DD) 
+-  Degenerate dimensions are very common when the grain of a fact table represents a single transaction
+- Common examples of degenerate dimensions include
+	- order numbers
+	- invoice numbers
+
+### Retail Schema in action
+![Retail Schema](images/Figure3.12-Retail_Sales.png)
+
+### Retail Schema Extensibility
+- Let's say a few years after the initial implementation, we want to roll out a frequent shopper program.
+- To handle this new addition, you need to create a frequent shopper dimension table and add a foreign key to the fact table
+	- for transactions that happened before the implementation of this program, create a default dim surrogate key that corresponds to 'Prior to Frequent Shopper Program' dimension row/value
+	- Also will need a default row for transactions that don't use a frequent shopper card
+- Original schema was able to accommodate this new dimension because the initial data was modeled at its most granular level.
+- Because dimension models are so extensible, here are some new features that are generally add-able without invaliding existing apps:
+	1. new dimension attributes, if new attributes are discovered, new columns can be created. For values that are only available after a point in time, those values before can be populated with 'Not Applicable'.
+	2. New dimensions: You can add the dimension to the fact table by adding a new FK and populating it correctly with values of the primary key from the dim table.
+	3. New measured facts:
+		- If the new fact is available at the same grain from the same measurement event, the fact can ee easily added to the fact table.
+		- If the new fact tables are only available from a point in time forward, populate missing values as NULL
+		- If the fact occurs at a different grain, then a new fact table will need to be created.
+
+### Factless Fact Tables
+- There is one question that cannot be answered by the previous schema, what products were on promo but did not sell.
+- The fact table records only SKU's that sell, if it included facts for SKU's that didn't sell, it would enlarge the table enormously.
+- A solution to check what products didn't sell would be a promotion coverage fact table.
+	- It would load one row for each product on promotion in a store each day
+- To facilitate counting, you can include a dummy fact such as promotion count and set it to a constant of 1
+- to determine what promotions didn't sell, you would
+	1. query the promotion table to determine all possible products
+	2. query against fact table to determine promotions that sold
+	3. Figure out the set difference between the two lists above
+![Product Factless table](images/Figure3.14-promotion_coverage.png)
+
+### Dimension and Fact Table Keys
+#### Dimension Table Surrogate Keys
+- The unique primary key of a dimension table should be a surrogate key, rather than relying on the operational system identifier (natural key).
+- surrogate keys are integers that are assigned sequentially to populate a dimension
+- Sometimes modelers want to use the natural key instead, however natural keys logic can eventually be invalidated
+- The analogy is that while NK may be faster to implement, and there's a small amount of pain to first use a surrogate key, it's like a flu-shot since in the long run, it reduces the risk of re-work.
+- Here are several advantages
+	- Buffer the DWH from operational changes. Sometimes operational systems will re-use keys after x months of inactivity, but DWH may retain this data for years, as such DWH may become vulnerable to key overlaps if using NK
+	- Integrate multiple source systems
+	- Improve performance: The smallest integer possible, whereas a NK can sometimes be a bulky string
+	- Handle null or unknown conditions: special surrogate key values are used to record dimension conditions that may not have an operational code
+	- Support dimension attribute change tracking: One of the primary techniques for handling changes to dim attributes relies on surrogate keys to handle the multiple profiles of a single natural key
+
+
+
