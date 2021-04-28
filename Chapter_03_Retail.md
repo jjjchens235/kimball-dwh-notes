@@ -256,5 +256,72 @@ The product dim represents the many descriptive attributes of each SKU.
 	- Handle null or unknown conditions: special surrogate key values are used to record dimension conditions that may not have an operational code
 	- Support dimension attribute change tracking: One of the primary techniques for handling changes to dim attributes relies on surrogate keys to handle the multiple profiles of a single natural key
 
+### Dimension Natural and Durable Supernatural Keys
+- If the natural key comes from multiple sources, you may pre-pend the source system, i.e. CRM|654990
+- Natural keys are often composed of constituent parts, in the dim table, these components should be split apart and made available as separate attributes
+- In a dim table with attribute change tracking, it's important that you have an identifier that reliably identifies that attribute over attribute changes
+- For these situations a permanent durable identifier known as a supernatural key is necessary
+
+#### Degenerate Dimension Surrogate keys
+- Although surrogate keys aren't typically assigned to degenerate dimensions, there are some situations in which a surrogate key is necessary
+	- For example, if a POS system wraps back to zero and re-uses previous control numbers
+
+#### Date Dimension Smart Keys
+- The date dimension has unique characteristics and requirements:
+	- Calendar dates are fixed
+	- Don't have to worry about handling unexpected dates
+- Most commonly the PK of a date dim is an integer formatted like yyyymmdd. 
+	- This key is not meant to be used directly in the fact table, rather it should be used to join the dim table for better performance
+	- What this key is meant for is to partition fact tables
+- Another alternative to the yyyymmdd key is using a true date type column
+	- This should only be used if the optimizer incorporates date type intelligence
+
+#### Fact Table Surrogate Keys
+- While a surrogate key is necessary in a dim table, it's not necessary in a fact table unless it's for back room ETL processing
+- The surrogate key for a fact table won't provide query performance, but it does offer the following benefits:
+1. Immediate unique identification
+2. Backing out or resuming a bulk load
+	- If a large number rows are being loaded and it's stopped halfway, the DBA can simply figure out the max key in the table and then resume the load from the correct pt
+	- Replacing updates with inserts plus deletes
+	- Using the fact table surrogate key as a parent in a parent/child schema: In cases where there is a child lower grain fact table, the surrogate key in the parent table is also exposed in the child table.
+
+### Resisting Normalization Urges
+- We discard normalization for ease of use and performance, not transactional efficiencies
+#### Snowflake Schemas with Normalized Dimensions
+- The flatted, denormalized dim tables with repeating values makes data modelers uncomfortable, as it uses up a lot more space
+- They also say that normalized dim tables are easier to maintain
+- Dim table normalization is referred to as snowflaking
+	- Redundant attributes are removed from the flat, denormalized dimension table and placed in separate normalized dimension tables
+![Snowflake dim](images/Figure3.15-Snowflake_dimension.png)
+- the snowflake design really balloons the number of necessary tables
+
+- Not recommended for the following reasons
+	1. Makes for a much more complex presentation
+	2. Database optimizers struggle with snowflaked schemas
+	3. Minor disk space saving insignificant
+	4. Negatively impacts user ability to browse within dimension
+	5. SQL becomes complex
+	6. Defeats the point of indexes
+
+#### Outriggers
+- Sometimes snowflaking is permissions to build an outrigger dimension
+![Snowflake dim](images/Figure3.16_SnowflakeOutrigger.png)
+- It only makes sense to outrigger a primary dimension table's date attribute if the business wants to filter and group this date by nonstandard calendar attributes, such as the fiscal period, business day indicator, or holiday period. Otherwise, you could just treat the date attribute as a standard date type column in the product dimension.
+
+#### Centipede Fact Tables with Too many Dimensions
+- Centipede fact tables are those where normally compact fact tables have suddenly turned into unruly monster that join dozens of dimension tables, here's an example
+![Centipede](images/Figure3.17_Centipede.png)
+
+- This leads to extra fact table disk space requirements
+ 	- While it's okay for dim tables to take up many cols, due to their low row count, it's much worse for fact tables to take up many columns because they naturally have a high row count
+- Most business processes can be represented with less than 20 dimensions in the fact table.
+	- If a design has 25 or more dimensions, you should look for ways to combine correlated dimensions into a single dimension.
+	- Perfectly correlated attributes, such as the levels of a hierarchy, as well as attributes with a reasonable statistical correlation, should be part of the same dimension.
+- [Columnar databases](https://docs.aws.amazon.com/redshift/latest/dg/c_columnar_storage_disk_mem_mgmnt.html) reduce the query/storage penalties associated with wide centipede fact tables
+
+### Summary
+- Regardless of industry, it's strongly encouraged to use the 4-step process, the author stresses especially clearing stating the grain
+- Loading the fact table with atomic data provides the greatest flexibility
+- Popular your dim tables with verbose, robust descriptive attributes
 
 
