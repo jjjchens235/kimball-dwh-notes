@@ -174,6 +174,7 @@ The product dim represents the many descriptive attributes of each SKU.
 #### Multiple Hierarchies in Dimension table
 - You can roll up stores to any geographic attribute such as zip code, county, and state
 - Contrary to popular belief city and state do not form a hierarchy, since there are many cities with the same name, you should include a city-state attribute instead
+
 ![Store Dimension](images/Figure3_10-Store_Dimensions.png)
 
 
@@ -189,7 +190,7 @@ The product dim represents the many descriptive attributes of each SKU.
 
 ### Null FK, Attributes and Facts
 - There needs to be a way to identify a null promotion key in the fact table
-- Referential integrity is violated if you put a null in a fact table column. Therefore there needs to be a row in the dim table to identify that the dim is not applicable to the measurement
+- Referential integrity is violated if you put a null FK in a fact table column. Therefore there needs to be a row in the dim table to identify that the dim is not applicable to the measurement
 - It is recommended that rather than using null when a row has not been fully populated, to rather use a descriptive string such as 'Not Applicable' as null values are special and require special syntax to identify them
 - Note that NULLS as metrics in the fact table is perfectly acceptable and should be used since they are properly handled in aggregate functions such as sum, and avg- substituting with zero would improperly skew the results
 

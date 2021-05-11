@@ -166,7 +166,7 @@ Besides the Kimball architecture, there are two other great alternatives
 
 ##### Hub and spoke coorporate information factory inmon architecture
 - Corporate Information Factory (CIF)
-![Bill Inmon](images/Figure_1.9-Bill_Inmon)
+![Bill Inmon](images/Figure1.9-Bill_Inmon)
 
 #### Dimensional Modeling Myths
 ##### Myth 1: Dim models are only for summary data
