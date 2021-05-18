@@ -81,3 +81,37 @@ The 3 fact tables have been covered, they are quite different but often times yo
 The reason for using periodic over transactions is because:
 - In many businesses, however, transaction details are not easily summarized to present management performance metrics.
 - As you saw in this inventory case study, crawling through the transactions would be extremely time-consuming, plus the logic required to interpret the effect of different kinds of transactions on inventory levels could be horrendously complicated, presuming you even have access to the required historical data.
+
+### Enterprise Data Warehouse Bus Architecture
+#### Understanding Bus Architecture
+![Shared Dimensions](images/Figure4.8_shared_dims.png)
+
+- The term bus refers to common structure to which everything connects from and derives power
+- The master suite of standardized dimensions and facts has a uniform interpretation across the enterprise.
+- This establishes the data architecture framework.
+-	You can then tackle the implementation of separate process-centric dimensional models, with each implementation closely adhering to the architectur
+
+#### Bus Matrix
+![Matrix](images/Figure4.10_Matrix.png)
+
+- The business processes are the matrix rows. These rows will later translate into dimensional models
+- Start with a single business process row 
+
+- The columns of the bus matrix represent the common dimensions used. 
+- Start with creating a list of core dimensions before filling the matrix
+
+#### Bus Matrix mistakes
+Matrix row mistakes (business processes):
+- Shouldn't be based off of departments or teams
+- Shouldn't represent a list of reports, should represent business processes
+
+Matrix column mistakes (dimensions)
+- Overly generalized columns, for example a 'person' column wouldn't be useful
+- Separate columns for each level of the hierarchy. For example, maybe one of the dimensions needs to be weekly, it would be a mistake to create a column just for that if you already have a column for the date. It's important to retain the overarching identification of common dimensions deployed at different levels of granularity.
+
+#### Retrofitting Existing Models to a bus matrix
+- Sometimes there are existing, standalone dimensions that already exist
+- You need to develop an incremental plan to integrate these dim models to the enterprise architecture.
+- If the existing dim model is riddled with errors, the effort to retrofit these models may exceed the effort to start from scratch
+
+### Conformed Dimensions
