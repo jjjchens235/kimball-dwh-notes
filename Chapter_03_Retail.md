@@ -73,6 +73,8 @@ Note that choosing which process to model first should be based on:
 - criticalness
 - feasibility
 
+- In this scenario, management wants to understand customer purchases captured through POS system.
+- This data enables the user to analyze which products are selling in which stores on which days under what promotional conditions in which transactions
 
 #### Step 2: Declare the grain
 Generally you want to identify the lowest atomic grain for the following reasons:
@@ -82,7 +84,10 @@ Generally you want to identify the lowest atomic grain for the following reasons
 In this scenario, the data should be at the level of a specific POS transaction. They won't necessarily need this data, but their requests may be to understand how shoppers took advantage of a .50 cents off promotion, and they need maximum flexibility for this.
 
 #### Step 3: Identify the dimensions
-Once we know that we are interested in the POS transaction,  it is easy to come up with the grain:
+- Once we know that we are interested in the POS transaction,  it is easy to come up with the dimensions.
+- Within the framework of the primary dimension (the transaction in this case) we can ask whether other dimensions can be attributed to the POS measurement.
+
+Here are the dims that apply:
 - date
 - product
 - store
@@ -102,7 +107,7 @@ The facts include:
 - per unit regular/discount/ net paid prices
 - extended discount
 - sales dollar amounts
-![Fact Table](images/Figure_3.3-fact_table_design.png)
+![Fact Table](images/Figure3.3-fact_table_design.png)
 
 #### Derived Facts
 - You can compute gross profit yourself, yet it generally advised to store these derived facts in the table as well, as it guarantees the calculation is calculated consistently
@@ -113,7 +118,7 @@ The facts include:
 - Unit price is a good example of this
 
 #### Transaction Fact Tables
-- transactional business processes are the most common
+Transactional business processes are the most common fact table type.
 These fact tables have the following characteristics:
 1. The grain of the transaction fact table is generally 1 row per transaction
 2. These fact tables are highly dimensional
