@@ -121,5 +121,13 @@ Large commercial customers have many points of contacts, because the number of c
 - Using this model, a specific page can be immediately placed into one or more understandable contexts (overall session, successful purchase, and abandoned shopping cart).
 
 ### Timespan Fact Tables
-- 
-	
+- In more operational applications, you may want to retrieve the exact status of a customer at some arbitrary instant in the past. Was the customer on fraud alert when denied an extension of credit?  
+- All these questions can be addressed if you carefully manage the transaction fact table containing all customer events. The key modeling step is to include a pair of date/time stamps, as shown in Figure 8.12.
+	- The first date/time stamp is the precise moment of the transaction
+	- And the second date/time stamp is the exact moment of the next transaction.
+
+### Partial Conformity of Multiple Customer Dimensions
+- In the ideal case, you examine all the data sources and define a single comprehensive dimension which you attach to all the data sources, either simultaneously within a single tablespace or by replicating across multiple tablespaces. Such a single comprehensive conformed dimension becomes a wonderful driver for creating integrated queries, analyses, and reports by making consistent row labels available for drill-across queries.
+- However, many times this isn't possible due to so many source systems and grains, in this case it's acceptable to start special confirmed attributes
+- For example, suppose you start by defining a fairly high-level categorization of customers called customer category. You can proceed methodically across all the customer-related dimensions, planting this attribute in each dimension without changing the grain of any target dimension and without invalidating any existing applications that depend on those dimensions.
+- If business users are frequently combining data from multiple business processes, a final approach is to define an additional fact table that combines the data once into a consolidated fact table.
