@@ -3,7 +3,7 @@
 - This chapter will provide a thorough discussion of the enterprise data warehouse bus architecture.
 - Underscore the importance of using conformed dimensions and facts
 
-Concepts to discuss
+Concepts to discuss:
 1. represent org value chains via series of dim models
 2. semi-additive facts
 3. Three fact table types
@@ -23,7 +23,6 @@ The value chain illustrated:
 - The primary objective of the DW/BI system is to monitor the performance of each process.
 - Each process produces unique metrics at unique time intervals with unique granularity and dimension which means we will need separate fact tables`
 
-
 ### Inventory Models
 Several inventory models to discuss:
 1. Inventory periodic snapshot - product inventory levels are measured at regular intervals and placed as separate regular intervals and placed as separate rows in a fact table.
@@ -39,8 +38,7 @@ Let's start with the 4 step dim design process:
 2. Grain: the most atomic level of detail provided is a daily inventory for each product in each store.
 3. Dimensions: date,product, store
 4. Fact: quantity on hand
-
-![Schema](Figure4.2-periodic_schema.png)
+![Periodic Snapshot](images/Figure4.2-periodic_schema.png)
 
 - The date dimension is identical to the table from Retail.
 - The product dimension could be enhanced with columns such as minimum reorder quantity
@@ -62,7 +60,7 @@ Let's start with the 4 step dim design process:
 	- value of the latest selling price
 - Notice that quantity on hand is semi-additive while the other facts are additive
 
-![Enhanced Inventory](Figure4.3_Enhanced_inventory.png)
+![Enhanced Inventory](images/Figure4.3_Enhanced_inventory.png)
 
 ### Inventory Transactions
 
@@ -79,14 +77,14 @@ Let's start with the 4 step dim design process:
 - In this inventory model, one row is placed in the fact table when a particular product is received at the warehouse. 
 - Accumulating snapshots are most appropriate when business users want to perform workflow or pipeline analysis.
 
-![Accumulating](Figure4.5-accumulating.png)
+![Accumulating](images/Figure4.5-accumulating.png)
 
 The evolution of the fact table:
-![Evolution](Figure4.6_Evolution.png)
+![Evolution](images/Figure4.6_Evolution.png)
 
 ### Fact Table Types
 The 3 fact tables have been covered, they are quite different but often times you need two complementary fact tables to get a complete picture of the business
-![Types]( Figure4.7_Types.png)
+![Types](images/Figure4.7_Types.png)
 
 
 ### Transaction Fact Tables

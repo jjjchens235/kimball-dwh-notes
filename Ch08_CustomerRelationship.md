@@ -43,7 +43,6 @@ List a series of goals for international considerations
 - They could issue a query to identify all customers who satisfied the spending criteria and then issue another fact query to analyze the behavior for that customer dimension subset.
 - But rather than all that, you can instead store an aggregated fact as a dimension attribute. This allows business users to simply constrain on the spending attribute just like they might on a geographic attribute.
 
-3
 ### Segmentation Attributes and Scores
 For an individual customer, here are some common segmentation attributes:
 - Gender
@@ -75,7 +74,7 @@ Here are a few reasons why we are breaking the 'no snowflake rule':
 - It is also loaded at different times than the rest of the data in the customer dimension
 - Significant space can be saved if the underlying customer dimension is large
 
-### customer Hierarchy considerations
+### Customer Hierarchy considerations
 
 #### Bridge Tables for Multivalued Dimensions
 - Let's say that you choose to use transactions as the grain.
@@ -94,7 +93,7 @@ Here are a few reasons why we are breaking the 'no snowflake rule':
 ### Bridge Tables for Sparse Attributes
 ### Bridge Table for Multiple Customer Contacts
 Large commercial customers have many points of contacts, because the number of contacts is unpredictable but possibly large, a bridge table is a way to handle this situation
-- ![Bridge table design](Figure8.9_bridge-multiple.png)
+![Bridge table design](images/Figure8.9_bridge-multiple.png)
 
 ### Complex Customer Behavior
 - This section will discuss the following:

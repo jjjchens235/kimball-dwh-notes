@@ -1,7 +1,8 @@
 ## Chapter 5 - Procurement
 Key concepts:
-- Blended versus seperate transaction schemas/tables
+- Blended versus separate transaction schemas/tables
 - Slowly changing dimensions
+
 ### Procurement Case Study
 - For many companies, procurement is a critical business activity. Effective procurement of products at the right price for resale is obviously important to retailers and distributors.
 
@@ -56,7 +57,17 @@ Type 1 is the simplest approach, but one issue is that you lose all history of a
 
 #### Type 2: Add a new row
 - This is main technique for supporting represent correct history
-![SCD 2](images/igure5.6_scd2.png)
+![SCD 2](images/Figure5.6_scd2.png)
 - The type 2 response is the primary workhorse technique for accurately tracking slowly changing dimension attributes. It is extremely powerful because the new dimension row automatically partitions history in the fact table.
 
-#### type 2 Effective and Expiration Dates
+#### Type 2 Effective and Expiration Dates
+
+- The effective and expiration dates refer to the moment when the row's attribute values become valid or invalid.
+- This is necessary because the system needs to know which surrogate key is valid when loading historical data.
+- We typically suggest the end date on the old row should be just prior to the effective date of the new row leaving no gaps between these effective and expiration dates.
+
+#### Type 3: Add new Attribute
+- A type 3 response is instead of adding a new role when an attribute changes, you update the current column with the updated value, and then create a new column with the previous value.
+- This can be useful for example when we want to compare old values with new values. One example could be if a district is re-drawn, we want to compare the old district facts with the new district facts.
+![SCD 3](images/Figure5.8_type3_scd.png)
+- Type 3 is most appropriate when there's a significant change impacting many rows in the dimension table, such as a product line or sales force reorganization. These en masse changes are prime candidates because business users often want the ability to analyze performance metrics using either the pre- or post-hierarchy reorganization for a period of time. With type 3 changes, the prior column is labeled to distinctly represent the prechanged grouping, such as 2012 department or pre-merger department. 

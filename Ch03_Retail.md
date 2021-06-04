@@ -233,7 +233,7 @@ The product dim represents the many descriptive attributes of each SKU.
 	1. new dimension attributes, if new attributes are discovered, new columns can be created. For values that are only available after a point in time, those values before can be populated with 'Not Applicable'.
 	2. New dimensions: You can add the dimension to the fact table by adding a new FK and populating it correctly with values of the primary key from the dim table.
 	3. New measured facts:
-		- If the new fact is available at the same grain from the same measurement event, the fact can ee easily added to the fact table.
+		- If the new fact is available at the same grain from the same measurement event, the fact can be easily added to the fact table.
 		- If the new fact tables are only available from a point in time forward, populate missing values as NULL
 		- If the fact occurs at a different grain, then a new fact table will need to be created.
 
@@ -294,7 +294,7 @@ The product dim represents the many descriptive attributes of each SKU.
 ### Resisting Normalization Urges
 - We discard normalization for ease of use and performance, not transactional efficiencies
 #### Snowflake Schemas with Normalized Dimensions
-- The flatted, denormalized dim tables with repeating values makes data modelers uncomfortable, as it uses up a lot more space
+- The flattened, denormalized dim tables with repeating values makes data modelers uncomfortable, as it uses up a lot more space
 - They also say that normalized dim tables are easier to maintain
 - Dim table normalization is referred to as snowflaking
 	- Redundant attributes are removed from the flat, denormalized dimension table and placed in separate normalized dimension tables
